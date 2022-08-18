@@ -87,7 +87,7 @@ outputs:
 
   - name: mlflow-ui-dbg{{ mlflow_suffix }}
     build:
-      skip: true  # [mlflow_variant == "skinny"]
+      skip: true  
     version: {{ version }}
     requirements:
       build:
