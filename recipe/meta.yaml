@@ -60,6 +60,9 @@ outputs:
         - waitress  # [win and mlflow_variant != "skinny"]
         - importlib-metadata
         - openssl
+
+        # until scipy is hotfixed: it brings in the wrong numpy
+        - numpy <1.23.0
       run_constrained:
         - mlflow{{ mlflow_other }} <0a0
     test:
