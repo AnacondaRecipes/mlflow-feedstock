@@ -19,6 +19,7 @@ source:
 
 build:
   number: 0
+  skip: true  # [py<38]
 
 outputs:
   - name: mlflow{{ mlflow_suffix }}
