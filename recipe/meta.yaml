@@ -19,7 +19,6 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38]
 
 outputs:
   - name: mlflow{{ mlflow_suffix }}
@@ -29,6 +28,7 @@ outputs:
     build:
       entry_points:
         - mlflow=mlflow.cli:cli
+      skip: true  # [py<38]
     requirements:
       host:
         - pip
@@ -106,7 +106,7 @@ outputs:
 
   - name: mlflow-ui-dbg{{ mlflow_suffix }}
     build:
-      skip: true  
+      skip: true
     version: {{ version }}
     requirements:
       host:
@@ -121,15 +121,27 @@ outputs:
         - {{ pin_subpackage('mlflow' + mlflow_suffix, exact=True) }}
     script: build-mlflow.bat  # [win]
     script: build-mlflow.sh  # [unix]
-
+    test:
+      commands:
+        - pip check
+      requires:
+        - pip
 
 about:
   home: https://mlflow.org/
+  summary: MLflow is an open source platform for the machine learning lifecycle.
+  description: |
+    MLflow is a platform to streamline machine learning development, including tracking
+    experiments, packaging code into reproducible runs, and sharing and deploying models.
+    MLflow offers a set of lightweight APIs that can be used with any existing machine
+    learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you
+    currently run ML code (e.g. in notebooks, standalone applications or the cloud).
   license: Apache-2.0
   license_family: APACHE
   license_file: LICENSE
-  summary: MLflow is an open source platform for the machine learning lifecycle.
+  license_url: https://github.com/AnacondaRecipes/mlflow-feedstock/blob/main/LICENSE.txt
   doc_url: https://mlflow.org
+  doc_source_url: https://github.com/mlflow/mlflow/tree/master/docs
   dev_url: https://github.com/mlflow/mlflow
 
 extra:
