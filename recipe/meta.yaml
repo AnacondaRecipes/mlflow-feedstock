@@ -31,7 +31,7 @@ build:
     - mlflow=mlflow.cli:cli
   skip: true  # [py<38 or s390x]
   script: |
-    export MLFLOW_SKINNY=1  # [unix and mlflow_variant == "skinny"]
+    export MLFLOW_SKINNY=1  # [not win and mlflow_variant == "skinny"]
     set MLFLOW_SKINNY=1  # [win and mlflow_variant == "skinny"]
     {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
 
@@ -55,22 +55,20 @@ requirements:
     - packaging <22
     - importlib-metadata >=3.7.0,!=4.7.0,<6.0.0a0
     - sqlparse >=0.4.0,<1.0.0a0
-{% if mlflow_variant != "skinny" %}
-    - alembic <2.0.0a
-    - docker-py >=4.0.0,<7.0.0a0
-    - flask <3.0.0a0 
-    - gunicorn <21  # [not win]
-    - numpy <2.0.0a0
-    - pandas <2.0.0a0
-    - querystring_parser <2.0.0a0
-    - scikit-learn <2.0.0a0
-    - pyarrow >=4.0.0,<11.0.0a0
-    - shap >=0.40,<1.0.0a0
-    - markdown >=3.3,<4.0.0a0
-    - jinja2 >=2.11,<4.0.0a0  # [not win]
-    - jinja2 >=3,<4.0.0a0  # [win]
-    - matplotlib-base <4.0.0a0
-{% endif %}
+    - alembic <2.0.0a  # [mlflow_variant != "skinny"]
+    - docker-py >=4.0.0,<7.0.0a0  # [mlflow_variant != "skinny"]
+    - flask <3.0.0a0  # [mlflow_variant != "skinny"]
+    - gunicorn <21  # [not win and mlflow_variant != "skinny"]
+    - numpy <2.0.0a0  # [mlflow_variant != "skinny"]
+    - pandas <2.0.0a0  # [mlflow_variant != "skinny"]
+    - querystring_parser <2.0.0a0  # [mlflow_variant != "skinny"]
+    - scikit-learn <2.0.0a0  # [mlflow_variant != "skinny"]
+    - pyarrow >=4.0.0,<11.0.0a0  # [mlflow_variant != "skinny"]
+    - shap >=0.40,<1.0.0a0  # [mlflow_variant != "skinny"]
+    - markdown >=3.3,<4.0.0a0  # [mlflow_variant != "skinny"]
+    - jinja2 >=2.11,<4.0.0a0  # [not win and mlflow_variant != "skinny"]
+    - jinja2 >=3,<4.0.0a0  # [win and mlflow_variant != "skinny"]
+    - matplotlib-base <4.0.0a0  # [mlflow_variant != "skinny"]
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
     - mxnet !=1.8.0
@@ -94,21 +92,19 @@ test:
     - mlflow.store
     - mlflow.tracking
     - mlflow.utils
-{% if mlflow_variant != "skinny" %}
-    - mlflow.entities
-    - mlflow.fastai
-    - mlflow.gluon
-    - mlflow.models
-    - mlflow.paddle
-    - mlflow.pyfunc
-    - mlflow.pytorch
-    - mlflow.recipes
-    - mlflow.sagemaker
-    - mlflow.server
-    - mlflow.tensorflow
-    - mlflow.types
-    - mlflow.xgboost
-{% endif %}
+    - mlflow.entities  # [mlflow_variant != "skinny"]
+    - mlflow.fastai  # [mlflow_variant != "skinny"]
+    - mlflow.gluon  # [mlflow_variant != "skinny"]
+    - mlflow.models  # [mlflow_variant != "skinny"]
+    - mlflow.paddle  # [mlflow_variant != "skinny"]
+    - mlflow.pyfunc  # [mlflow_variant != "skinny"]
+    - mlflow.pytorch  # [mlflow_variant != "skinny"]
+    - mlflow.recipes  # [mlflow_variant != "skinny"]
+    - mlflow.sagemaker  # [mlflow_variant != "skinny"]
+    - mlflow.server  # [mlflow_variant != "skinny"]
+    - mlflow.tensorflow  # [mlflow_variant != "skinny"]
+    - mlflow.types  # [mlflow_variant != "skinny"]
+    - mlflow.xgboost  # [mlflow_variant != "skinny"]
   commands:
     - mlflow --help
     - pip check
