@@ -119,6 +119,11 @@ test:
     - pip check
   requires:
     - pip
+    # docker-py 4.4.1 causes pip check to fail because we are allowing a newer
+    # version of pywin32 than it expects. To fix this I'm forcing this exact
+    # pair to be used, even though that is not what will be used in production
+    - docker-py 4.4.1  # [win]
+    - pywin32 227  # [win]
 
 about:
   home: https://mlflow.org/
