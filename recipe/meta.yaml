@@ -29,7 +29,7 @@ build:
   number: 0
   entry_points:
     - mlflow=mlflow.cli:cli
-  skip: true  # [py<38]
+  skip: true  # [py<38 or s390x]
   script: |
     export MLFLOW_SKINNY=1  # [unix and mlflow_variant == "skinny"]
     set MLFLOW_SKINNY=1  # [win and mlflow_variant == "skinny"]
