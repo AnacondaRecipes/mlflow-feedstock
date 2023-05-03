@@ -115,6 +115,7 @@ test:
   requires:
     - pip
     - pytest
+    - pytest-cov
     - pywin32 227  # [win and py<=38]
 
 about:
