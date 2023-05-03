@@ -99,11 +99,11 @@ test:
     - mlflow.tracking
     - mlflow.utils
 {% if mlflow_variant != "skinny" %}
-    - mlflow.models -
-    - mlflow.pyfunc -
-    - mlflow.pytorch -
-    - mlflow.sagemaker -
-    - mlflow.server -
+    - mlflow.models
+    - mlflow.pyfunc
+    - mlflow.pytorch
+    - mlflow.sagemaker
+    - mlflow.server
 {% endif %}
   commands:
     - mlflow --help
