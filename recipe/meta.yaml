@@ -57,6 +57,7 @@ requirements:
     - importlib-metadata <7,>=3.7.0,!=4.7.0
     - sqlparse >=0.4.0,<1.0
     - openssl
+    - databricks-cli >=0.8.7,<1
 {% if mlflow_variant != "skinny" %}
     - alembic <2,!=1.10
     - docker-py >=4.0.0,<7.0
