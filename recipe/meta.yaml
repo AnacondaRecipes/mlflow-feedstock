@@ -47,6 +47,7 @@ requirements:
     - python
     - click >=7.0,<9.0
     - cloudpickle <3.0
+    - databricks-cli >=0.8.7,<1
     - entrypoints <1.0
     - gitpython >=2.1.0,<4.0
     - pyyaml >=5.1,<7.0
@@ -56,8 +57,6 @@ requirements:
     - packaging <24
     - importlib-metadata <7,>=3.7.0,!=4.7.0
     - sqlparse >=0.4.0,<1.0
-    - openssl
-    - databricks-cli >=0.8.7,<1
 {% if mlflow_variant != "skinny" %}
     - alembic <2,!=1.10
     - docker-py >=4.0.0,<7.0
@@ -65,19 +64,17 @@ requirements:
     - numpy <2.0
     - scipy <2.0
     - pandas <3.0
-    - prometheus_flask_exporter <1
     - querystring_parser <2.0
     - sqlalchemy >=1.4.0,<3
     - gunicorn <21  # [not win]
     - waitress <3  # [win]
     - scikit-learn <2.0
-    - databricks-cli >=0.8.7,<1.0
     - pyarrow <12,>=4.0.0
-    - shap <1,>=0.40
     - markdown >=3.3,<4.0
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
     - matplotlib-base <4.0
+    - prometheus_flask_exporter <1
 {% endif %}
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
