@@ -74,7 +74,7 @@ requirements:
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
     - matplotlib-base <4.0
-    - prometheus_flask_exporter <1
+    # - prometheus_flask_exporter <1
 {% endif %}
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
@@ -113,8 +113,6 @@ test:
     - pip check  # [not win or py<=38]
   requires:
     - pip
-    - pytest
-    - pytest-cov
     - pywin32 227  # [win and py<=38]
 
 about:
