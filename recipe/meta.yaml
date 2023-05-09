@@ -1,6 +1,6 @@
 {% set name = "mlflow" %}
-{% set version = "2.0.1" %}
-{% set sha256 = "7ce6caf3c6acb022d6f5ce8a0995a92be1db524ae16aade1f83da661cdf993de" %}
+{% set version = "2.3.1" %}
+{% set sha256 = "63439397b2718ce5747288ef5475f46b3716b370a517be3e3c67b799a247a186" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -35,7 +35,7 @@ build:
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
 {% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
+    {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
 
 requirements:
   host:
@@ -45,36 +45,36 @@ requirements:
     - wheel
   run:
     - python
-    - click >=7.0,<9.0.0a1
-    - cloudpickle <3.0.0a0
-    - databricks-cli >=0.8.7,<1.0.0a0
-    - entrypoints <1.0.0a0
-    - gitpython >=2.1.0,<4.0.0a0
-    - pyyaml >=5.1,<7.0.0a0
-    - protobuf >=3.12.0,<5.0.0a0
-    - pytz <2023
-    - requests >=2.17.3,<3.0.0a0
-    - packaging <22
-    - importlib-metadata >=3.7.0,!=4.7.0,<6.0.0a0
-    - sqlparse >=0.4.0,<1.0.0a0
+    - click >=7.0,<9.0
+    - cloudpickle <3.0
+    - databricks-cli >=0.8.7,<1
+    - entrypoints <1.0
+    - gitpython >=2.1.0,<4.0
+    - pyyaml >=5.1,<7.0
+    - protobuf >=3.12.0,<5.0
+    - pytz <2024
+    - requests >=2.17.3,<3.0
+    - packaging <24
+    - importlib-metadata <7,>=3.7.0,!=4.7.0
+    - sqlparse >=0.4.0,<1.0
 {% if mlflow_variant != "skinny" %}
-    - alembic <2.0.0a
-    - docker-py >=4.0.0,<7.0.0a0
-    - flask <3.0.0a0
-    - numpy <2.0.0a0
-    - scipy <2.0.0a0
-    - pandas <2.0.0a0
-    - querystring_parser <2.0.0a0
-    - sqlalchemy >=1.4.0,<2.0.0a0
+    - alembic <2,!=1.10
+    - docker-py >=4.0.0,<7.0
+    - flask <3.0
+    - numpy <2.0
+    - scipy <2.0
+    - pandas <3.0
+    - querystring_parser <2.0
+    - sqlalchemy >=1.4.0,<3
     - gunicorn <21  # [not win]
     - waitress <3  # [win]
-    - scikit-learn <2.0.0a0
-    - pyarrow >=4.0.0,<11.0.0a0
-    - shap >=0.40,<1.0.0a0
-    - markdown >=3.3,<4.0.0a0
-    - jinja2 >=2.11,<4.0.0a0  # [not win]
-    - jinja2 >=3,<4.0.0a0  # [win]
-    - matplotlib-base <4.0.0a0
+    - scikit-learn <2.0
+    - pyarrow <12,>=4.0.0
+    - markdown >=3.3,<4.0
+    - jinja2 <4,>=2.11  # [not win]
+    - jinja2 <4,>=3.0  # [win]
+    - matplotlib-base <4.0
+    # - prometheus_flask_exporter <1
 {% endif %}
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
@@ -87,12 +87,10 @@ requirements:
     - pytorch_lightning >=1.5.10
     - xgboost >=0.82
     - onnx >=1.11.0
+    - shap >=0.40
 test:
   imports:
     - mlflow
-    - mlflow.artifacts
-    - mlflow.azure
-    - mlflow.deployments
     - mlflow.projects
     - mlflow.protos
     - mlflow.rfunc
@@ -100,19 +98,11 @@ test:
     - mlflow.tracking
     - mlflow.utils
 {% if mlflow_variant != "skinny" %}
-    - mlflow.entities
-    - mlflow.fastai
-    - mlflow.gluon
     - mlflow.models
-    - mlflow.paddle
     - mlflow.pyfunc
     - mlflow.pytorch
-    - mlflow.recipes
     - mlflow.sagemaker
     - mlflow.server
-    - mlflow.tensorflow
-    - mlflow.types
-    - mlflow.xgboost
 {% endif %}
   commands:
     - mlflow --help

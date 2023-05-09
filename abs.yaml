@@ -1,7 +1,0 @@
-aggregate_check: false
-upload_channels:
-  - services
-  - sfe1ed40
-channels:
-  - services
-  - sfe1ed40
