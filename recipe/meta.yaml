@@ -69,7 +69,7 @@ requirements:
     - gunicorn <21  # [not win]
     - waitress <3  # [win]
     - scikit-learn <2.0
-    - pyarrow <12,>=4.0.0
+    - pyarrow <13,>=4.0.0
     - markdown >=3.3,<4.0
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
