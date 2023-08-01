@@ -110,7 +110,7 @@ test:
     # version of pywin32 (see below). We cannot currently ignore that single
     # pip check failure so we have to ignore all of them for now. But the pin
     # below does allow us to confirm for older versions of Python at least.
-    - pip check  # [not win or py<=38]
+    - pip check  # [not win]
   requires:
     - pip
     - pywin32 227  # [win and py<=38]
