@@ -1,6 +1,6 @@
 {% set name = "mlflow" %}
-{% set version = "2.3.1" %}
-{% set sha256 = "63439397b2718ce5747288ef5475f46b3716b370a517be3e3c67b799a247a186" %}
+{% set version = "2.5.0" %}
+{% set sha256 = "f992ae8ea9c73502344baf48c4ec447aa9efbfa8965bc090868e6163234f4eb0" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -35,7 +35,7 @@ build:
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
 {% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
 
 requirements:
   host:
@@ -69,7 +69,7 @@ requirements:
     - gunicorn <21  # [not win]
     - waitress <3  # [win]
     - scikit-learn <2.0
-    - pyarrow <12,>=4.0.0
+    - pyarrow <13,>=4.0.0
     - markdown >=3.3,<4.0
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
@@ -110,7 +110,7 @@ test:
     # version of pywin32 (see below). We cannot currently ignore that single
     # pip check failure so we have to ignore all of them for now. But the pin
     # below does allow us to confirm for older versions of Python at least.
-    - pip check  # [not win or py<=38]
+    - pip check  # [not win]
   requires:
     - pip
     - pywin32 227  # [win and py<=38]
@@ -134,9 +134,7 @@ about:
   license: Apache-2.0
   license_family: APACHE
   license_file: LICENSE.txt
-  license_url: https://github.com/AnacondaRecipes/mlflow-feedstock/blob/main/LICENSE.txt
   doc_url: https://mlflow.org
-  doc_source_url: https://github.com/mlflow/mlflow/tree/master/docs
   dev_url: https://github.com/mlflow/mlflow
 
 extra:
