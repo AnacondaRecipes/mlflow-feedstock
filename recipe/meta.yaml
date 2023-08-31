@@ -1,6 +1,6 @@
 {% set name = "mlflow" %}
-{% set version = "2.5.0" %}
-{% set sha256 = "f992ae8ea9c73502344baf48c4ec447aa9efbfa8965bc090868e6163234f4eb0" %}
+{% set version = "2.6.0" %}
+{% set sha256 = "fd569232e65d69c0cb7006847b1a1bd80831bf0e19378052a44ee5c0ae349182" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -58,7 +58,7 @@ requirements:
     - importlib-metadata <7,>=3.7.0,!=4.7.0
     - sqlparse >=0.4.0,<1.0
 {% if mlflow_variant != "skinny" %}
-    - alembic <2,!=1.10
+    - alembic <2,!=1.10.0
     - docker-py >=4.0.0,<7.0
     - flask <3.0
     - numpy <2.0
@@ -66,7 +66,7 @@ requirements:
     - pandas <3.0
     - querystring_parser <2.0
     - sqlalchemy >=1.4.0,<3
-    - gunicorn <21  # [not win]
+    - gunicorn <22  # [not win]
     - waitress <3  # [win]
     - scikit-learn <2.0
     - pyarrow <13,>=4.0.0
