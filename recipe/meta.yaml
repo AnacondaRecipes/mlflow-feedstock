@@ -1,6 +1,6 @@
 {% set name = "mlflow" %}
-{% set version = "2.6.0" %}
-{% set sha256 = "fd569232e65d69c0cb7006847b1a1bd80831bf0e19378052a44ee5c0ae349182" %}
+{% set version = "2.9.2" %}
+{% set sha256 = "25f2ad3d0b0e78bd32296058fb4c315dff4379515cd669ac6137f39507b9dfe9" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -46,7 +46,7 @@ requirements:
   run:
     - python
     - click >=7.0,<9.0
-    - cloudpickle <3.0
+    - cloudpickle <4.0
     - databricks-cli >=0.8.7,<1
     - entrypoints <1.0
     - gitpython >=2.1.0,<4.0
@@ -55,12 +55,12 @@ requirements:
     - pytz <2024
     - requests >=2.17.3,<3.0
     - packaging <24
-    - importlib-metadata <7,>=3.7.0,!=4.7.0
+    - importlib-metadata <8,>=3.7.0,!=4.7.0
     - sqlparse >=0.4.0,<1.0
 {% if mlflow_variant != "skinny" %}
     - alembic <2,!=1.10.0
     - docker-py >=4.0.0,<7.0
-    - flask <3.0
+    - flask <4.0
     - numpy <2.0
     - scipy <2.0
     - pandas <3.0
@@ -69,7 +69,7 @@ requirements:
     - gunicorn <22  # [not win]
     - waitress <3  # [win]
     - scikit-learn <2.0
-    - pyarrow <13,>=4.0.0
+    - pyarrow <15,>=4.0.0
     - markdown >=3.3,<4.0
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
@@ -82,12 +82,14 @@ requirements:
     - fastai >=2.4.1
     - spacy >=3.3.0
     - tensorflow >=2.8.0
-    - torch >=1.11.0
+    - pytorch >=1.11.0
     - torchvision >=0.12.0
-    - pytorch_lightning >=1.5.10
+    - lightning>=1.8.1
     - xgboost >=0.82
     - onnx >=1.11.0
-    - shap >=0.40
+    - shap >=0.42.1
+    - openai<1.0
+
 test:
   imports:
     - mlflow
