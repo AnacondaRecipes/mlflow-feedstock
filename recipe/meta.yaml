@@ -1,6 +1,6 @@
 {% set name = "mlflow" %}
-{% set version = "2.9.2" %}
-{% set sha256 = "25f2ad3d0b0e78bd32296058fb4c315dff4379515cd669ac6137f39507b9dfe9" %}
+{% set version = "2.12.1" %}
+{% set sha256 = "aa92aebb2379a9c5484cbe901cdf779d5408ac96a641e4b1f8a2d1ff974db7c9" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
