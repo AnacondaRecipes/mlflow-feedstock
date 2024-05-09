@@ -1,6 +1,5 @@
 {% set name = "mlflow" %}
 {% set version = "2.12.1" %}
-{% set sha256 = "aa92aebb2379a9c5484cbe901cdf779d5408ac96a641e4b1f8a2d1ff974db7c9" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -22,8 +21,8 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
+  sha256: d270f6503c8e0087c6f31cbe6fef2766d89fff71ff1ff03b1c5858554e279c62
 
 build:
   number: 0
@@ -34,8 +33,16 @@ build:
 {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
+    cp {{ SRC_DIR}}/pyproject.toml orig_pyproject.toml  # [not win]
+    copy {{ SRC_DIR}}/pyproject.toml orig_pyproject.toml  # [win]
+    cp {{ SRC_DIR}}/pyproject.skinny.toml pyproject.toml  # [not win]
+    copy {{ SRC_DIR}}/pyproject.skinny.toml pyproject.toml  # [win]
 {% endif %}
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+{% if mlflow_variant == "skinny" %}
+    cp orig_pyproject.toml pyproject.toml  # [not win]
+    copy orig_pyproject.toml pyproject.toml  # [win]
+{% endif %}
 
 requirements:
   host:
