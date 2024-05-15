@@ -33,10 +33,10 @@ build:
 {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
-    cp {{ SRC_DIR}}/pyproject.toml orig_pyproject.toml  # [not win]
-    copy {{ SRC_DIR}}/pyproject.toml orig_pyproject.toml  # [win]
-    cp {{ SRC_DIR}}/pyproject.skinny.toml pyproject.toml  # [not win]
-    copy {{ SRC_DIR}}/pyproject.skinny.toml pyproject.toml  # [win]
+    cp {{ SRC_DIR }}/pyproject.toml orig_pyproject.toml  # [not win]
+    copy {{ SRC_DIR }}\pyproject.toml orig_pyproject.toml  # [win]
+    cp {{ SRC_DIR }}/pyproject.skinny.toml pyproject.toml  # [not win]
+    copy {{ SRC_DIR }}\pyproject.skinny.toml pyproject.toml  # [win]
 {% endif %}
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
 {% if mlflow_variant == "skinny" %}
