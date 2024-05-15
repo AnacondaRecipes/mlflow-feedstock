@@ -116,14 +116,9 @@ test:
 {% endif %}
   commands:
     - mlflow --help
-    # docker-py 4.4.1 causes pip check to fail because it expects a precise
-    # version of pywin32 (see below). We cannot currently ignore that single
-    # pip check failure so we have to ignore all of them for now. But the pin
-    # below does allow us to confirm for older versions of Python at least.
     - pip check
   requires:
     - pip
-    - pywin32 227  # [win and py<=38]
 
 about:
   home: https://mlflow.org/

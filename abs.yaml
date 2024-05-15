@@ -2,3 +2,4 @@ channels:
   - https://staging.continuum.io/prefect/fs/graphql-relay-feedstock/pr2/a8991c5
   - https://staging.continuum.io/prefect/fs/graphene-feedstock/pr2/6bf628a
   - https://staging.continuum.io/prefect/fs/gunicorn-feedstock/pr1/0b02e59
+  - https://staging.continuum.io/prefect/fs/docker-py-feedstock/pr3/954a69d
