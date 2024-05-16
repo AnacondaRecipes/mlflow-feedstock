@@ -1,6 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "2.9.2" %}
-{% set sha256 = "25f2ad3d0b0e78bd32296058fb4c315dff4379515cd669ac6137f39507b9dfe9" %}
+{% set version = "2.12.2" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -22,8 +21,9 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  # Using github as source for mlflow-skinny which does not exist on PyPI
+  url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
+  sha256: bdec209c55cd33fbe79deb32d6cb9966d50a4674aac00b706e2658ac81ee58bc
 
 build:
   number: 0
@@ -34,8 +34,16 @@ build:
 {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
+    cp {{ SRC_DIR }}/pyproject.toml orig_pyproject.toml  # [not win]
+    copy {{ SRC_DIR }}\pyproject.toml orig_pyproject.toml  # [win]
+    cp {{ SRC_DIR }}/pyproject.skinny.toml pyproject.toml  # [not win]
+    copy {{ SRC_DIR }}\pyproject.skinny.toml pyproject.toml  # [win]
 {% endif %}
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+{% if mlflow_variant == "skinny" %}
+    cp orig_pyproject.toml pyproject.toml  # [not win]
+    copy orig_pyproject.toml pyproject.toml  # [win]
+{% endif %}
 
 requirements:
   host:
@@ -45,50 +53,66 @@ requirements:
     - wheel
   run:
     - python
-    - click >=7.0,<9.0
-    - cloudpickle <4.0
-    - databricks-cli >=0.8.7,<1
-    - entrypoints <1.0
-    - gitpython >=2.1.0,<4.0
-    - pyyaml >=5.1,<7.0
-    - protobuf >=3.12.0,<5.0
-    - pytz <2024
-    - requests >=2.17.3,<3.0
-    - packaging <24
+    - click >=7.0,<9
+    - cloudpickle <4
+    - entrypoints <1
+    - gitpython >=3.1.9,<4
     - importlib-metadata <8,>=3.7.0,!=4.7.0
-    - sqlparse >=0.4.0,<1.0
+    - packaging <25
+    - protobuf >=3.12.0,<5
+    - pytz <2025
+    - pyyaml >=5.1,<7
+    - requests >=2.17.3,<3
+    - sqlparse >=0.4.0,<1
 {% if mlflow_variant != "skinny" %}
-    - alembic <2,!=1.10.0
-    - docker-py >=4.0.0,<7.0
-    - flask <4.0
-    - numpy <2.0
-    - scipy <2.0
-    - pandas <3.0
-    - querystring_parser <2.0
-    - sqlalchemy >=1.4.0,<3
-    - gunicorn <22  # [not win]
-    - waitress <3  # [win]
-    - scikit-learn <2.0
-    - pyarrow <15,>=4.0.0
-    - markdown >=3.3,<4.0
+    - flask <4
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
-    - matplotlib-base <4.0
-    # - prometheus_flask_exporter <1
+    - alembic <2,!=1.10.0
+    - docker-py >=4.0.0,<8
+    - graphene <4
+    - gunicorn <23  # [not win]
+    - markdown >=3.3,<4
+    - matplotlib-base <4
+    - numpy <2
+    - pandas <3
+    - pyarrow <16,>=4.0.0
+    - querystring_parser <2
+    - scikit-learn <2
+    - scipy <2
+    - sqlalchemy >=1.4.0,<3
+    - waitress <4  # [win]
 {% endif %}
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
     - mxnet !=1.8.0
     - fastai >=2.4.1
     - spacy >=3.3.0
-    - tensorflow >=2.8.0
+    - tensorflow >=2.10.0
     - pytorch >=1.11.0
     - torchvision >=0.12.0
     - lightning>=1.8.1
     - xgboost >=0.82
     - onnx >=1.11.0
+    - holidays !=0.25
     - shap >=0.42.1
-    - openai<1.0
+    - openai <1.0
+    - azureml-core >=1.2.0
+    - mlserver >=1.2.0, !=1.3.1, <1.4.0
+    - mlserver-mlflow >=1.2.0,!=1.3.1,<1.4.0
+    # mlflow-gateway, mlflow-skinny-gateway, genai
+    - pydantic >=1.0,<3
+    - fastapi <1
+    - uvicorn-standard <1
+    - watchfiles <1
+    - aiohttp <4
+    - boto3 >=1.28.56,<2
+    - tiktoken <1
+    - slowapi >=0.1.9,<1
+    # databricks
+    - azure-storage-file-datalake >12
+    - google-cloud-storage >=1.30.0
+    - boto3 >1
 
 test:
   imports:
@@ -108,14 +132,9 @@ test:
 {% endif %}
   commands:
     - mlflow --help
-    # docker-py 4.4.1 causes pip check to fail because it expects a precise
-    # version of pywin32 (see below). We cannot currently ignore that single
-    # pip check failure so we have to ignore all of them for now. But the pin
-    # below does allow us to confirm for older versions of Python at least.
-    - pip check  # [not win]
+    - pip check
   requires:
     - pip
-    - pywin32 227  # [win and py<=38]
 
 about:
   home: https://mlflow.org/
