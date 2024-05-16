@@ -23,7 +23,7 @@ package:
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
-  sha256: d712f1af9d44f1eb9e1baee8ca64f7311e185b7572fc3c1e0a83a4c8ceff6aad
+  sha256: bdec209c55cd33fbe79deb32d6cb9966d50a4674aac00b706e2658ac81ee58bc
 
 build:
   number: 0
