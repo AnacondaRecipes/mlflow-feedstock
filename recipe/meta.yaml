@@ -88,7 +88,7 @@ requirements:
     - mxnet !=1.8.0
     - fastai >=2.4.1
     - spacy >=3.3.0
-    - tensorflow >=2.10.0 # [not (osx and arm64)]
+    - tensorflow >=2.10.0
     - pytorch >=1.11.0
     - torchvision >=0.12.0
     - lightning>=1.8.1
