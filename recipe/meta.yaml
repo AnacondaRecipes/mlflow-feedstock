@@ -62,6 +62,8 @@ requirements:
     - opentelemetry-api >=1.9.0,<3
     - opentelemetry-sdk >=1.9.0,<3
     - packaging <25
+    # required on imports for win
+    - pytz <2025  # [win]
     - protobuf >=3.12.0,<6
     - pyyaml >=5.1,<7
     - requests >=2.17.3,<3
@@ -133,12 +135,16 @@ test:
     - test ! -f $SP_DIR/pylint_plugins  # [unix]
     - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
     # smoke tests
-    - pytest -vv tests/artifacts
+    # skip test_log_artifact_windows_path_with_hostname (run only for win)
+    # because needs a data file
+    - pytest -vv tests/artifacts -k "not test_log_artifact_windows_path_with_hostname"
 {% else %}
     - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
     # smoke tests
-    # numpy is not included in the skinny variant
-    - pytest -vv tests/artifacts -k "not test_load_image"
+    # skip test_load_image because numpy is not included in the skinny variant
+    # skip test_log_artifact_windows_path_with_hostname (run only for win)
+    # because needs a data file
+    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname)"
 {% endif %}
     # test from .github/workflows/test-package-build.yml#L97
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
