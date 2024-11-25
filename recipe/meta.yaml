@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "2.16.2" %}
+{% set version = "2.17.2" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -23,7 +23,7 @@ package:
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
-  sha256: d101bf639b7671408d67d357f4af207e8655a41d50ca3befa951026d49751e39
+  sha256: 84c6cad59877f1de177175ef619c0e0d6fe3e617b060cc75fbd2696b9e50e380
 
 build:
   number: 0
