@@ -11,13 +11,14 @@ source:
 
 build:
   number: 0
+  skip: true  # [py<39 or s390x]
 
 requirements:
   host:
-    - pip
     - python
-    - setuptools
-    - wheel
+    - pip
+  run:
+    - python
 
 outputs:
   - name: mlflow-skinny
@@ -25,6 +26,7 @@ outputs:
     script: build-mlflow.bat  # [win]
     version: {{ version }}
     build:
+      skip: true  # [py<39 or s390x]
       entry_points:
         - mlflow=mlflow.cli:cli
     requirements:
@@ -32,6 +34,7 @@ outputs:
         - pip
         - python
         - setuptools
+        - wheel
       run:
         - python
         - cachetools<6,>=5.0.0
@@ -84,9 +87,15 @@ outputs:
         - mlflow.utils
       source_files:
         - tests/artifacts
+      requires:
+        - pip
+        - pytest
+        - pillow
+        - numpy
       commands:
         - mlflow --help
         - mlflow --version
+        - echo "Checking 'mlflow-skinny' exists..."         # [unix]
         - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
         - pip check
         - set  # [win]
@@ -97,40 +106,89 @@ outputs:
         - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname)"
         # test from .github/workflows/test-package-build.yml#L97
         - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
-      requires:
-        - pip
-        - pytest
-        - pillow
-        - numpy
+
+    about:
+      home: https://mlflow.org
+      summary: "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client"
+      description: |
+        MLflow Skinny is a lightweight MLflow package without SQL storage, server,
+        UI, or data science dependencies.
+      license: Apache-2.0
+      license_family: APACHE
+      license_file: LICENSE.txt
+      doc_url: https://mlflow.org
+      dev_url: https://github.com/mlflow/mlflow
 
   - name: mlflow
     script: build-mlflow.sh   # [unix]
     script: build-mlflow.bat  # [win]
     version: {{ version }}
+    build:
+      skip: true  # [py<39 or s390x]
+      entry_points:
+        - mlflow=mlflow.cli:cli
     requirements:
       host:
         - pip
         - python
         - setuptools
+        - wheel
       run:
-        - alembic <2,!=1.10
-        - docker-py >=4.0.0,<8
+        - python
+        - cachetools >=5.0.0,<6
+        - click >=7.0,<9
+        - cloudpickle <4
+        - databricks-sdk >=0.20.0,<1
+        - gitpython >=3.1.9,<4
+        - importlib-metadata <9,>=3.7.0,!=4.7.0
+        - opentelemetry-api >=1.9.0,<3
+        - opentelemetry-sdk >=1.9.0,<3
+        - packaging <25
+        # required on imports for win
+        - pytz <2025  # [win]
+        - protobuf >=3.12.0,<6
+        - pyyaml >=5.1,<7
+        - requests >=2.17.3,<3
+        - sqlparse >=0.4.0,<1
         - flask <4
-        - graphene<4
-        - gunicorn <24  # [not win]
         - jinja2 <4,>=2.11  # [not win]
         - jinja2 <4,>=3.0  # [win]
-        - markdown <4,>=3.3
+        - alembic <2,!=1.10.0
+        - docker-py >=4.0.0,<8
+        - graphene <4
+        - gunicorn <24  # [not win]
+        - markdown >=3.3,<4
         - matplotlib-base <4
         - numpy <3
         - pandas <3
-        - prometheus_flask_exporter <1
         - pyarrow <19,>=4.0.0
-        - querystring_parser <2
         - scikit-learn <2
         - scipy <2
         - sqlalchemy >=1.4.0,<3
         - waitress <4  # [win]
+      run_constrained:
+        - mlflow-skinny <0a0
+        # extras
+        - google-cloud-storage >=1.30.0
+        - azureml-core >=1.2.0
+        # mlserver
+        - mlserver >=1.2.0, !=1.3.1
+        - mlserver-mlflow >=1.2.0,!=1.3.1
+        # mlflow-gateway, mlflow-skinny-gateway, genai
+        - pydantic >=1.0,<3
+        - fastapi <1
+        - uvicorn-standard <1
+        - watchfiles <1
+        - aiohttp <4
+        - boto3 >=1.28.56,<2
+        - tiktoken <1
+        - slowapi >=0.1.9,<1
+        # databricks
+        - azure-storage-file-datalake >12
+        - google-cloud-storage >=1.30.0
+        - boto3 >1
+        # langchain
+        - langchain >=0.1.0,<=0.3.7
     test:
       imports:
         - mlflow
@@ -143,12 +201,16 @@ outputs:
         - mlflow.rfunc
         - mlflow.sagemaker
         - mlflow.server
-        - mlflow.server.prometheus_exporter
         - mlflow.store
         - mlflow.tracking
         - mlflow.utils
       source_files:
         - tests/artifacts
+      requires:
+        - pip
+        - pytest
+        - pillow
+        - numpy
       commands:
         - mlflow --help
         - mlflow --version
@@ -156,6 +218,7 @@ outputs:
         # This should not be packaged
         - test ! -f $SP_DIR/pylint_plugins  # [unix]
         - pip check
+        - echo "Checking 'mlflow' exists..."         # [unix]
         - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
         - set  # [win]
         # smoke tests
@@ -164,11 +227,21 @@ outputs:
         - pytest -vv tests/artifacts -k "not test_log_artifact_windows_path_with_hostname"
         # test from .github/workflows/test-package-build.yml#L97
         - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
-      requires:
-        - pip
-        - pytest
-        - pillow
-        - numpy
+    
+    about:
+      home: https://mlflow.org
+      summary: "MLflow: A Machine Learning Lifecycle Platform"
+      description: |
+        MLflow is a platform to streamline machine learning development, including tracking
+        experiments, packaging code into reproducible runs, and sharing and deploying models.
+        MLflow offers a set of lightweight APIs that can be used with any existing machine
+        learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you
+        currently run ML code (e.g. in notebooks, standalone applications or the cloud).
+      license: Apache-2.0
+      license_family: APACHE
+      license_file: LICENSE.txt
+      doc_url: https://mlflow.org
+      dev_url: https://github.com/mlflow/mlflow
 
 about:
   home: https://mlflow.org/
