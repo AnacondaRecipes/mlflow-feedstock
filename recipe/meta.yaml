@@ -10,10 +10,10 @@
 
 {% if mlflow_variant == "skinny" %}
 {% set mlflow_suffix = "-skinny" %}
-{% set mlflow_other = "" %}
+{% set mlflow_other = "mlflow" %}
 {% else %}
 {% set mlflow_suffix = "" %}
-{% set mlflow_other = "-skinny" %}
+{% set mlflow_other = "mlflow-skinny" %}
 {% endif %}
 
 package:
@@ -37,7 +37,7 @@ build:
     cp {{ SRC_DIR }}/pyproject.skinny.toml pyproject.toml  # [not win]
     copy {{ SRC_DIR }}\pyproject.skinny.toml pyproject.toml  # [win]
 {% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
 {% if mlflow_variant == "skinny" %}
     cp orig_pyproject.toml pyproject.toml  # [not win]
     copy orig_pyproject.toml pyproject.toml  # [win]
@@ -87,7 +87,7 @@ requirements:
     - waitress <4  # [win]
 {% endif %}
   run_constrained:
-    - mlflow{{ mlflow_other }} <0a0
+    - {{ mlflow_other }} <0a0
     # extras
     - google-cloud-storage >=1.30.0
     - azureml-core >=1.2.0
