@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "2.17.2" %}
+{% set version = "2.18.0" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -23,13 +23,11 @@ package:
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
-  sha256: 84c6cad59877f1de177175ef619c0e0d6fe3e617b060cc75fbd2696b9e50e380
+  sha256: 910ad1e2fce93b412063637d465e9291c99678a3bbccbf2b4f7736887321f44b
 
 build:
   number: 0
-  entry_points:
-    - mlflow=mlflow.cli:cli
-  skip: true  # [py<38 or s390x]
+  skip: true  # [py<39 or s390x]
   script: |
 {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
@@ -44,6 +42,8 @@ build:
     cp orig_pyproject.toml pyproject.toml  # [not win]
     copy orig_pyproject.toml pyproject.toml  # [win]
 {% endif %}
+  entry_points:
+    - mlflow=mlflow.cli:cli
 
 requirements:
   host:
@@ -80,7 +80,7 @@ requirements:
     - matplotlib-base <4
     - numpy <3
     - pandas <3
-    - pyarrow <18,>=4.0.0
+    - pyarrow <19,>=4.0.0
     - scikit-learn <2
     - scipy <2
     - sqlalchemy >=1.4.0,<3
@@ -88,10 +88,12 @@ requirements:
 {% endif %}
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
+    # extras
     - google-cloud-storage >=1.30.0
     - azureml-core >=1.2.0
-    - mlserver >=1.2.0, !=1.3.1, <1.4.0
-    - mlserver-mlflow >=1.2.0,!=1.3.1,<1.4.0
+    # mlserver
+    - mlserver >=1.2.0, !=1.3.1
+    - mlserver-mlflow >=1.2.0,!=1.3.1
     # mlflow-gateway, mlflow-skinny-gateway, genai
     - pydantic >=1.0,<3
     - fastapi <1
@@ -105,6 +107,8 @@ requirements:
     - azure-storage-file-datalake >12
     - google-cloud-storage >=1.30.0
     - boto3 >1
+    # langchain
+    - langchain >=0.1.0,<=0.3.7
 
 test:
   imports:
@@ -125,20 +129,28 @@ test:
 {% endif %}
   source_files:
     - tests/artifacts
+  requires:
+    - pip
+    - pytest
+    - pillow
+    - numpy
   commands:
     - mlflow --help
+    - mlflow --version
     - pip check
     # these tests come from the conda-forge recipe
 {% if mlflow_variant != "skinny" %}
     - mlflow recipes --help
     # This should not be packaged
-    - test ! -f $SP_DIR/pylint_plugins  # [unix]
+    - test ! -f $SP_DIR/pylint_plugins           # [unix]
+    - echo "Checking 'mlflow' exists..."         # [unix]
     - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
     # smoke tests
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
     - pytest -vv tests/artifacts -k "not test_log_artifact_windows_path_with_hostname"
 {% else %}
+    - echo "Checking 'mlflow-skinny' exists..."         # [unix]
     - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
     # smoke tests
     # skip test_load_image because numpy is not included in the skinny variant
@@ -148,11 +160,6 @@ test:
 {% endif %}
     # test from .github/workflows/test-package-build.yml#L97
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
-  requires:
-    - pip
-    - pytest
-    - pillow
-    - numpy
 
 about:
   home: https://mlflow.org
