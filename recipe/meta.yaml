@@ -87,7 +87,7 @@ requirements:
     - waitress <4  # [win]
 {% endif %}
   run_constrained:
-    - {{ mlflow_other }} <0a0
+    - mlflow{{ mlflow_other }} <0a0
     # extras
     - google-cloud-storage >=1.30.0
     - azureml-core >=1.2.0
