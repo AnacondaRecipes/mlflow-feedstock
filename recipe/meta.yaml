@@ -10,10 +10,10 @@
 
 {% if mlflow_variant == "skinny" %}
 {% set mlflow_suffix = "-skinny" %}
-{% set mlflow_other = "mlflow" %}
+{% set mlflow_other = "" %}
 {% else %}
 {% set mlflow_suffix = "" %}
-{% set mlflow_other = "mlflow-skinny" %}
+{% set mlflow_other = "-skinny" %}
 {% endif %}
 
 package:
