@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "2.18.0" %}
+{% set version = "3.3.2" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -23,25 +23,19 @@ package:
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
-  sha256: 910ad1e2fce93b412063637d465e9291c99678a3bbccbf2b4f7736887321f44b
+  sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
 build:
   number: 0
   skip: true  # [py<39 or s390x]
   script: |
-{% if mlflow_variant == "skinny" %}
+    {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
-    cp {{ SRC_DIR }}/pyproject.toml orig_pyproject.toml  # [not win]
-    copy {{ SRC_DIR }}\pyproject.toml orig_pyproject.toml  # [win]
-    cp {{ SRC_DIR }}/pyproject.skinny.toml pyproject.toml  # [not win]
-    copy {{ SRC_DIR }}\pyproject.skinny.toml pyproject.toml  # [win]
-{% endif %}
+    cd {{ SRC_DIR }}/libs/skinny  # [not win]
+    cd {{ SRC_DIR }}\libs\skinny  # [win]
+    {% endif %}
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
-{% if mlflow_variant == "skinny" %}
-    cp orig_pyproject.toml pyproject.toml  # [not win]
-    copy orig_pyproject.toml pyproject.toml  # [win]
-{% endif %}
   entry_points:
     - mlflow=mlflow.cli:cli
 
