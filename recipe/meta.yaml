@@ -27,7 +27,7 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<39 or s390x]
+  skip: true  # [py<310 or s390x]
   script: |
     {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
