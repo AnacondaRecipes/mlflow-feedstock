@@ -33,9 +33,9 @@ build:
     export MLFLOW_SKINNY=1  # [not win]
     set MLFLOW_SKINNY=1  # [win]
     cd {{ SRC_DIR }}/libs/skinny  # [not win]
-    cd {{ SRC_DIR }}\libs\skinny  # [win]
+    cd {{ SRC_DIR }}\\libs\\skinny  # [win]
     {% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
+    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
   entry_points:
     - mlflow=mlflow.cli:cli
 
