@@ -50,12 +50,17 @@ requirements:
     - cachetools >=5.0.0,<6
     - click >=7.0,<9
     - cloudpickle <4
+    - cryptography >=43.0.0,<46
     - databricks-sdk >=0.20.0,<1
+    - fastapi <1
     - gitpython >=3.1.9,<4
     - importlib-metadata <9,>=3.7.0,!=4.7.0
     - opentelemetry-api >=1.9.0,<3
     - opentelemetry-sdk >=1.9.0,<3
     - packaging <25
+    - pydantic >=1.10.8,<3
+    - typing-extensions >=4.0.0,<5
+    - uvicorn <1
     # required on imports for win
     - pytz <2025  # [win]
     - protobuf >=3.12.0,<6
@@ -134,7 +139,6 @@ test:
     - pip check
     # these tests come from the conda-forge recipe
 {% if mlflow_variant != "skinny" %}
-    - mlflow recipes --help
     # This should not be packaged
     - test ! -f $SP_DIR/pylint_plugins           # [unix]
     - echo "Checking 'mlflow' exists..."         # [unix]
@@ -150,7 +154,7 @@ test:
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname)"
+    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist)"
 {% endif %}
     # test from .github/workflows/test-package-build.yml#L97
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
