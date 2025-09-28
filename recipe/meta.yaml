@@ -73,7 +73,7 @@ requirements:
     - jinja2 <4,>=3.0  # [win]
     - alembic <2,!=1.10.0
     - docker-py >=4.0.0,<8
-    - graphene <4
+    - graphene >=3.4,<4
     - gunicorn <24  # [not win]
     - markdown >=3.3,<4
     - matplotlib-base <4
