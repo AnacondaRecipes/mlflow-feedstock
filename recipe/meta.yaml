@@ -27,7 +27,7 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<310 or s390x]
+  skip: true  # [py<310 or s390x or (py>=313 and mlflow_variant != "skinny")]
   script: |
     {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
@@ -73,7 +73,7 @@ requirements:
     - jinja2 <4,>=3.0  # [win]
     - alembic <2,!=1.10.0
     - docker-py >=4.0.0,<8
-    - graphene >=3.4,<4
+    - graphene <4
     - gunicorn <24  # [not win]
     - markdown >=3.3,<4
     - matplotlib-base <4
