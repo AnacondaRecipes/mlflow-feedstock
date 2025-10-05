@@ -143,6 +143,8 @@ test:
     - test ! -f $SP_DIR/pylint_plugins           # [unix]
     - echo "Checking 'mlflow' exists..."         # [unix]
     - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
+    - echo "Checking 'mlflow' exists..."         # [win]
+    - pip list | findstr "mlflow"                # [win]
     # smoke tests
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
@@ -150,6 +152,8 @@ test:
 {% else %}
     - echo "Checking 'mlflow-skinny' exists..."         # [unix]
     - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
+    - echo "Checking 'mlflow-skinny' exists..."         # [win]
+    - pip list | findstr "mlflow-skinny"                # [win]
     # smoke tests
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
@@ -157,6 +161,7 @@ test:
     - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist)"
 {% endif %}
     # test from .github/workflows/test-package-build.yml#L97
+    - python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"  # [win]
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
 about:
