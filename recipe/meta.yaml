@@ -26,8 +26,8 @@ source:
   sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
 build:
-  number: 0
-  skip: true  # [py<310 or s390x or (py>=313 and mlflow_variant != "skinny")]
+  number: 1
+  skip: true  # [py<310 or s390x]
   script: |
     {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
