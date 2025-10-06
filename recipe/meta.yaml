@@ -28,11 +28,6 @@ source:
 build:
   number: 2
   skip: true  # [py<310 or s390x]
-  script:
-    - export MLFLOW_SKINNY=1                                                                                    # [mlflow_variant == "skinny" and not win]
-    - set MLFLOW_SKINNY=1                                                                                       # [mlflow_variant == "skinny" and win]
-    - {{ PYTHON }} -m pip install ./libs/skinny --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [mlflow_variant == "skinny"]
-    - {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv              # [mlflow_variant != "skinny"]
   entry_points:
     - mlflow=mlflow.cli:cli
 
