@@ -31,9 +31,13 @@ build:
   script: |
     {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1  # [not win]
+    {{ PYTHON }} -m pip install {{ SRC_DIR }}/libs/skinny --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [not win]
     set MLFLOW_SKINNY=1  # [win]
-    {% endif %}
+    xcopy /E /I /Y {{ SRC_DIR }}\\mlflow {{ SRC_DIR }}\\libs\\skinny\\mlflow  # [win]
+    {{ PYTHON }} -m pip install {{ SRC_DIR }}\\libs\\skinny --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [win]
+    {% else %}
     {{ PYTHON }} -m pip install {{ SRC_DIR }} --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+    {% endif %}
   entry_points:
     - mlflow=mlflow.cli:cli
 
