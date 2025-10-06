@@ -26,16 +26,13 @@ source:
   sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
 build:
-  number: 1
+  number: 2
   skip: true  # [py<310 or s390x]
-  script: |
-    {% if mlflow_variant == "skinny" %}
-    export MLFLOW_SKINNY=1  # [not win]
-    set MLFLOW_SKINNY=1  # [win]
-    cd {{ SRC_DIR }}/libs/skinny  # [not win]
-    cd {{ SRC_DIR }}\\libs\\skinny  # [win]
-    {% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
+  script:
+    - export MLFLOW_SKINNY=1                                                                                    # [mlflow_variant == "skinny" and not win]
+    - set MLFLOW_SKINNY=1                                                                                       # [mlflow_variant == "skinny" and win]
+    - {{ PYTHON }} -m pip install ./libs/skinny --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [mlflow_variant == "skinny"]
+    - {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv              # [mlflow_variant != "skinny"]
   entry_points:
     - mlflow=mlflow.cli:cli
 
