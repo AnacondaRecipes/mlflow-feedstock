@@ -2,7 +2,7 @@
 
 set -ex
 
-if [ "${mlflow_variant}" = "skinny" ]; then
+if [ "${PKG_NAME}" = "mlflow-skinny" ]; then
   export MLFLOW_SKINNY=1
   ${PYTHON} -m pip install ./libs/skinny --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
 else

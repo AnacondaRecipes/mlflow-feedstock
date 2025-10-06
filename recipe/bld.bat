@@ -1,6 +1,6 @@
 @echo on
 
-if [%mlflow_variant%] == [skinny] (
+if [%PKG_NAME%] == [mlflow-skinny] (
   set MLFLOW_SKINNY=1
 
   @rem Using symlinks doesn't seem to work on windows, materialize them.
