@@ -33,7 +33,7 @@ build:
     export MLFLOW_SKINNY=1  # [not win]
     cd {{ SRC_DIR }}/libs/skinny  # [not win]
     set MLFLOW_SKINNY=1  # [win]
-    xcopy /E /I /Y {{ SRC_DIR }}\\mlflow {{ SRC_DIR }}\\libs\\skinny\\mlflow  # [win]
+    xcopy /E /I /Y /H {{ SRC_DIR }}\\mlflow {{ SRC_DIR }}\\libs\\skinny\\mlflow  # [win]
     cd {{ SRC_DIR }}\\libs\\skinny  # [win]
     {% endif %}
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
