@@ -20,8 +20,6 @@ if "%mlflow_variant%"=="skinny" (
         echo ERROR: Failed to change directory to libs\skinny
         exit /b 1
     )
-) else (
-    echo Building full mlflow variant
 )
 
 REM Install the package

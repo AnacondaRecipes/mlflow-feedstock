@@ -34,6 +34,7 @@ build:
     cd {{ SRC_DIR }}/libs/skinny  # [not win]
     {% endif %}  # [not win]
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [not win]
+  script: bld.bat  # [win]
   entry_points:
     - mlflow=mlflow.cli:cli
 
