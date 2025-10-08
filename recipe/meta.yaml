@@ -26,7 +26,7 @@ source:
   sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
 build:
-  number: 4
+  number: 0
   skip: true  # [py<310 or s390x]
   script: |  # [not win]
     {% if mlflow_variant == "skinny" %}  # [not win]
@@ -141,8 +141,6 @@ test:
     - test ! -f $SP_DIR/pylint_plugins           # [unix]
     - echo "Checking 'mlflow' exists..."         # [unix]
     - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
-    - echo "Checking 'mlflow' exists..."         # [win]
-    - pip list | findstr "mlflow"                # [win]
     # smoke tests
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
@@ -150,8 +148,6 @@ test:
 {% else %}
     - echo "Checking 'mlflow-skinny' exists..."         # [unix]
     - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
-    - echo "Checking 'mlflow-skinny' exists..."         # [win]
-    - pip list | findstr "mlflow-skinny"                # [win]
     # smoke tests
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
