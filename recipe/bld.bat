@@ -8,8 +8,9 @@ if "%mlflow_variant%"=="skinny" (
 
     REM Copy mlflow directory to libs\skinny\mlflow
     echo Copying mlflow directory...
-    xcopy /E /I /Y /H "%SRC_DIR%\mlflow" "%SRC_DIR%\libs\skinny\mlflow"
-    if errorlevel 1 (
+    robocopy /E /NFL /NDL /NJH /NJS /nc /ns /np "%SRC_DIR%\mlflow" "%SRC_DIR%\libs\skinny\mlflow"
+    REM robocopy returns 1 for successful copy, 0 for no files, >= 8 for errors
+    if errorlevel 8 (
         echo ERROR: Failed to copy mlflow directory
         exit /b 1
     )
