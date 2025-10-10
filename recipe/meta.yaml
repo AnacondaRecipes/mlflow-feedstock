@@ -29,11 +29,11 @@ build:
   number: 0
   skip: true  # [py<310 or s390x]
   script: |  # [not win]
-    {% if mlflow_variant == "skinny" %}  # [not win]
-    export MLFLOW_SKINNY=1  # [not win]
-    cd {{ SRC_DIR }}/libs/skinny  # [not win]
-    {% endif %}  # [not win]
-    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv  # [not win]
+    {% if mlflow_variant == "skinny" %}
+    export MLFLOW_SKINNY=1
+    cd {{ SRC_DIR }}/libs/skinny
+    {% endif %}
+    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
   entry_points:
     - mlflow=mlflow.cli:cli
 
@@ -48,7 +48,6 @@ requirements:
     - cachetools >=5.0.0,<6
     - click >=7.0,<9
     - cloudpickle <4
-    - cryptography >=43.0.0,<46
     - databricks-sdk >=0.20.0,<1
     - fastapi <1
     - gitpython >=3.1.9,<4
@@ -66,6 +65,7 @@ requirements:
     - requests >=2.17.3,<3
     - sqlparse >=0.4.0,<1
 {% if mlflow_variant != "skinny" %}
+    - cryptography >=43.0.0,<46
     - flask <4
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
