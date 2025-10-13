@@ -28,8 +28,8 @@ source:
 build:
   number: 0
   skip: true  # [py<310 or s390x]
-  script: |
 {% if not win %}
+  script: |
     {% if mlflow_variant == "skinny" %}
     export MLFLOW_SKINNY=1
     cd {{ SRC_DIR }}/libs/skinny
