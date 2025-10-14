@@ -22,6 +22,11 @@ package:
 
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
+  # Note: We use the default pyproject.toml (not pyproject.release.toml) because
+  # pyproject.release.toml declares mlflow as depending on mlflow-skinny and
+  # mlflow-tracing as pip packages, which would cause pip check to fail since
+  # those packages aren't installed in our build. Converting to a multi-output
+  # recipe would be needed to use pyproject.release.toml correctly.
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
   sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
