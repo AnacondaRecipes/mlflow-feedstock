@@ -144,6 +144,7 @@ test:
     - pip check
     # these tests come from the conda-forge recipe
 {% if mlflow_variant != "skinny" %}
+    - mlflow recipes --help
     # This should not be packaged
     - test ! -f $SP_DIR/pylint_plugins           # [unix]
     - echo "Checking 'mlflow' exists..."         # [unix]
