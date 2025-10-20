@@ -36,7 +36,7 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<310 or s390x]
+  skip: true  # [py<310]
 {% if not win %}
   script: |
     {% if mlflow_variant == "skinny" %}
@@ -165,8 +165,6 @@ test:
     # because needs a data file
     - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist)"
 {% endif %}
-    # test from .github/workflows/test-package-build.yml#L97
-    - python -c "import sys; print('Python path:'); [print(p) for p in sys.path]"  # [win]
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
 about:
