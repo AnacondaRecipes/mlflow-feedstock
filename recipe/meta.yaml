@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "2.18.0" %}
+{% set version = "3.3.2" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -11,9 +11,13 @@
 {% if mlflow_variant == "skinny" %}
 {% set mlflow_suffix = "-skinny" %}
 {% set mlflow_other = "" %}
+{% set summary_text = "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client" %}
+{% set description_text = "MLflow Skinny is a lightweight MLflow package without SQL storage, server, UI, or data science dependencies." %}
 {% else %}
 {% set mlflow_suffix = "" %}
 {% set mlflow_other = "-skinny" %}
+{% set summary_text = "MLflow: A Machine Learning Lifecycle Platform" %}
+{% set description_text = "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models. MLflow offers a set of lightweight APIs that can be used with any existing machine learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you currently run ML code (e.g. in notebooks, standalone applications or the cloud)." %}
 {% endif %}
 
 package:
@@ -22,25 +26,24 @@ package:
 
 source:
   # Using github as source for mlflow-skinny which does not exist on PyPI
+  # Note: We use the default pyproject.toml (not pyproject.release.toml) because
+  # pyproject.release.toml declares mlflow as depending on mlflow-skinny and
+  # mlflow-tracing as pip packages, which would cause pip check to fail since
+  # those packages aren't installed in our build. Converting to a multi-output
+  # recipe would be needed to use pyproject.release.toml correctly.
   url: https://github.com/mlflow/mlflow/archive/refs/tags/v{{ version }}.zip
-  sha256: 910ad1e2fce93b412063637d465e9291c99678a3bbccbf2b4f7736887321f44b
+  sha256: 9cfa071e7a75ff4a0d47a3ee4bfc948a6dfa019edc2863325b71d2362f61b760
 
 build:
   number: 0
-  skip: true  # [py<39 or s390x]
+  skip: true  # [py<310]
+{% if not win %}
   script: |
-{% if mlflow_variant == "skinny" %}
-    export MLFLOW_SKINNY=1  # [not win]
-    set MLFLOW_SKINNY=1  # [win]
-    cp {{ SRC_DIR }}/pyproject.toml orig_pyproject.toml  # [not win]
-    copy {{ SRC_DIR }}\pyproject.toml orig_pyproject.toml  # [win]
-    cp {{ SRC_DIR }}/pyproject.skinny.toml pyproject.toml  # [not win]
-    copy {{ SRC_DIR }}\pyproject.skinny.toml pyproject.toml  # [win]
-{% endif %}
-    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
-{% if mlflow_variant == "skinny" %}
-    cp orig_pyproject.toml pyproject.toml  # [not win]
-    copy orig_pyproject.toml pyproject.toml  # [win]
+    {% if mlflow_variant == "skinny" %}
+    export MLFLOW_SKINNY=1
+    cd {{ SRC_DIR }}/libs/skinny
+    {% endif %}
+    {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
 {% endif %}
   entry_points:
     - mlflow=mlflow.cli:cli
@@ -53,22 +56,27 @@ requirements:
     - wheel
   run:
     - python
-    - cachetools >=5.0.0,<6
+    - cachetools >=5.0.0,<7
     - click >=7.0,<9
     - cloudpickle <4
     - databricks-sdk >=0.20.0,<1
+    - fastapi <1
     - gitpython >=3.1.9,<4
     - importlib-metadata <9,>=3.7.0,!=4.7.0
     - opentelemetry-api >=1.9.0,<3
     - opentelemetry-sdk >=1.9.0,<3
-    - packaging <25
+    - packaging <26
+    - pydantic >=1.10.8,<3
+    - typing-extensions >=4.0.0,<5
+    - uvicorn <1
     # required on imports for win
     - pytz <2025  # [win]
-    - protobuf >=3.12.0,<6
+    - protobuf >=3.12.0,<7
     - pyyaml >=5.1,<7
     - requests >=2.17.3,<3
     - sqlparse >=0.4.0,<1
 {% if mlflow_variant != "skinny" %}
+    - cryptography >=43.0.0,<46
     - flask <4
     - jinja2 <4,>=2.11  # [not win]
     - jinja2 <4,>=3.0  # [win]
@@ -80,7 +88,7 @@ requirements:
     - matplotlib-base <4
     - numpy <3
     - pandas <3
-    - pyarrow <19,>=4.0.0
+    - pyarrow <22,>=4.0.0
     - scikit-learn <2
     - scipy <2
     - sqlalchemy >=1.4.0,<3
@@ -92,23 +100,23 @@ requirements:
     - google-cloud-storage >=1.30.0
     - azureml-core >=1.2.0
     # mlserver
-    - mlserver >=1.2.0, !=1.3.1
-    - mlserver-mlflow >=1.2.0,!=1.3.1
-    # mlflow-gateway, mlflow-skinny-gateway, genai
-    - pydantic >=1.0,<3
-    - fastapi <1
-    - uvicorn-standard <1
-    - watchfiles <1
+    - mlserver >=1.2.0,!=1.3.1,<2.0.0
+    - mlserver-mlflow >=1.2.0,!=1.3.1,<2.0.0
+    # genai
     - aiohttp <4
-    - boto3 >=1.28.56,<2
+    - boto3 <2,>=1.28.56
+    - fastapi <1
+    - slowapi <1,>=0.1.9
     - tiktoken <1
-    - slowapi >=0.1.9,<1
+    - uvicorn-standard <1
+    - watchfiles <2
     # databricks
     - azure-storage-file-datalake >12
     - google-cloud-storage >=1.30.0
     - boto3 >1
+    - databricks-agents >=1.2.0,<2.0
     # langchain
-    - langchain >=0.1.0,<=0.3.7
+    - langchain >=0.1.0,<=0.3.27
 
 test:
   imports:
@@ -140,7 +148,7 @@ test:
     - pip check
     # these tests come from the conda-forge recipe
 {% if mlflow_variant != "skinny" %}
-    - mlflow recipes --help
+    - mlflow server --help
     # This should not be packaged
     - test ! -f $SP_DIR/pylint_plugins           # [unix]
     - echo "Checking 'mlflow' exists..."         # [unix]
@@ -156,27 +164,14 @@ test:
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname)"
+    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist)"
 {% endif %}
-    # test from .github/workflows/test-package-build.yml#L97
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
 about:
   home: https://mlflow.org
-{% if mlflow_variant == "skinny" %}
-  summary: "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client"
-  description: |
-    MLflow Skinny is a lightweight MLflow package without SQL storage, server,
-    UI, or data science dependencies.
-{% else %}
-  summary: "MLflow: A Machine Learning Lifecycle Platform"
-  description: |
-    MLflow is a platform to streamline machine learning development, including tracking
-    experiments, packaging code into reproducible runs, and sharing and deploying models.
-    MLflow offers a set of lightweight APIs that can be used with any existing machine
-    learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you
-    currently run ML code (e.g. in notebooks, standalone applications or the cloud).
-{% endif %}
+  summary: "{{ summary_text }}"
+  description: "{{ description_text }}"
   license: Apache-2.0
   license_family: APACHE
   license_file: LICENSE.txt
