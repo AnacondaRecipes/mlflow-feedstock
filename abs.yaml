@@ -1,0 +1,5 @@
+channels:
+  - https://staging.continuum.io/pbp/fs/huey-feedstock/pr1/3271770
+
+build_env_vars:
+  ANACONDA_ROCKET_ENABLE_PY314 : yes
