@@ -31,7 +31,7 @@ source:
   # mlflow-tracing as pip packages, which would cause pip check to fail since
   # those packages aren't installed in our build. Converting to a multi-output
   # recipe would be needed to use pyproject.release.toml correctly.
-  url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.zip
+  url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 1efe3674245a6058347d20f95f74506bbb7c65f6831f4c9eebffdf4b60420b24
 
 build:
