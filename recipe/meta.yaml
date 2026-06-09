@@ -166,7 +166,7 @@ test:
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory)"
+    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory or test_list_artifacts_with_artifact_uri or test_list_artifacts_with_run_id)"
 {% endif %}
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
