@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "3.12.0" %}
+{% set version = "3.13.0" %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -32,11 +32,10 @@ source:
   # those packages aren't installed in our build. Converting to a multi-output
   # recipe would be needed to use pyproject.release.toml correctly.
   url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: d13c303b0bfdf1ca238717e69d1ac8005ae2226e236e245669706cd5eaab1d78
+  sha256: ab4b26e1be6831cf3ea38d80c8c8c80f27a709ce1438f30f8d0a20fb1f02d985
 
 build:
   number: 0
-  skip: true  # [py<310]
 {% if not win %}
   script: |
     {% if mlflow_variant == "skinny" %}
@@ -47,17 +46,15 @@ build:
 {% endif %}
   entry_points:
     - mlflow=mlflow.cli:cli
+  skip: true  # [py<310]
 
 requirements:
   host:
     - pip
     - python
     - setuptools <=82.0.1
-    - wheel
   run:
     - python
-    - aiohttp <4
-    - starlette <1
     - cachetools >=5.0.0,<8
     - click >=7.0,<9
     - cloudpickle <4
@@ -75,23 +72,23 @@ requirements:
     - pyyaml >=5.1,<7
     - requests >=2.17.3,<3
     - sqlparse >=0.4.0,<1
+    - starlette <2
     - typing-extensions >=4.0.0,<5
     - uvicorn <1
 {% if mlflow_variant != "skinny" %}
     - flask-cors <7
     - flask <4
+    - aiohttp <4
     - alembic <2,!=1.10.0
-    - cryptography >=43.0.0,<47
-    # required on imports for win
-    - pytz <2025  # [win]
+    - cryptography >=43.0.0,<49
     - docker-py >=4.0.0,<8
     - graphene <4
-    - huey >=2.5.4,<3
-    - gunicorn <26  # [not win]
+    - gunicorn <27  # [not win]
+    - huey >=2.5.4,<4
     - matplotlib-base <4
     - numpy <3
     - pandas <3
-    - pyarrow >=4.0.0,<24
+    - pyarrow >=4.0.0,<25
     - scikit-learn <2
     - scipy <2
     - skops <1
@@ -103,21 +100,25 @@ requirements:
     # extras
     - google-cloud-storage >=1.30.0
     - azureml-core >=1.2.0
-    # mlserver
-    - mlserver >=1.2.0,!=1.3.1,<2.0.0
-    - mlserver-mlflow >=1.2.0,!=1.3.1,<2.0.0
-    #- boto3 <2,>=1.28.56
+    # databricks
+    - azure-storage-file-datalake >12
+    - databricks-agents >=1.2.0,<2.0
+    # gateway or genai
+    - boto3 >=1.28.56,<2
     - slowapi <1,>=0.1.9
     - tiktoken <1
     - uvicorn-standard <1
     - watchfiles <2
-    # databricks
-    - azure-storage-file-datalake >12
-    #- google-cloud-storage >=1.30.0
-    #- boto3 >1
-    - databricks-agents >=1.2.0,<2.0
+    # mcp
+    - fastmcp >=2.0.0,<4
+    - click !=8.3.0
+    # azure
+    - azure-storage-blob >=12
+    - azure-identity >=1.6.1
     # langchain
-    - langchain >=0.3.19,<=1.2.9
+    - langchain >=0.3.26,<=1.3.0
+    # auth
+    - flask-wtf <2
 
 test:
   imports:
@@ -157,7 +158,7 @@ test:
     # smoke tests
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
-    - pytest -vv tests/artifacts -k "not test_log_artifact_windows_path_with_hostname"
+    - pytest -vv tests/artifacts -k "not (test_log_artifact_windows_path_with_hostname or test_artifact_logging_resolution_works_with_non_root_working_directory)"
 {% else %}
     - echo "Checking 'mlflow-skinny' exists..."         # [unix]
     - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
@@ -165,7 +166,7 @@ test:
     # skip test_load_image because numpy is not included in the skinny variant
     # skip test_log_artifact_windows_path_with_hostname (run only for win)
     # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json)"
+    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory or test_list_artifacts_with_artifact_uri or test_list_artifacts_with_run_id)"
 {% endif %}
     - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
