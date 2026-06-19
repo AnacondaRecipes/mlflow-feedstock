@@ -3,8 +3,9 @@ upstream_sources:
   - github:
       identifier: mlflow/mlflow
       use_max_tag: true
-      include_regex: ^v\d+\.\d+\.\d+$
-      prefix: v
+      exclude_regex: (?i)^(?=.*(?:(?<=\d)rc\d*|(?<=\d)dev\d+|(?:^|[-._])(?:alpha|beta|gamma|pre|preview)(?:\d+)?|[-._]rc\d+|(?:^|[-._])dev\d+|(?:\d+\.)+\d+[ab]\d*)).+$
+      from_pattern: ^v?(\d+(?:\.\d+)*.*)$
+      to_pattern: \1
     packages:
       - mlflow
       - mlflow-skinny
