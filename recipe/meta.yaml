@@ -1,5 +1,13 @@
 {% set name = "mlflow" %}
-{% set version = "3.13.0" %}
+{% set version = "3.14.0" %}
+{% set mlflow_suffix = "-skinny" %}
+{% set mlflow_suffix = "" %}
+{% set mlflow_other = "" %}
+{% set mlflow_other = "-skinny" %}
+{% set summary_text = "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client" %}
+{% set summary_text = "MLflow: A Machine Learning Lifecycle Platform" %}
+{% set description_text = "MLflow Skinny is a lightweight MLflow package without SQL storage, server, UI, or data science dependencies." %}
+{% set description_text = "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models. MLflow offers a set of lightweight APIs that can be used with any existing machine learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you currently run ML code (e.g. in notebooks, standalone applications or the cloud)." %}
 
 # MLFlow offers two variants, a "normal" install and a "skinny" install with
 # a reduced installation and fewer dependencies. The skinny installation is obtained
@@ -7,19 +15,6 @@
 # we accomplish this with two conda packages, mflow and mlflow-skinny. Note that this
 # is not the same as matplotlib-base/matplotlib, where the only differences is the
 # dependency set; the installed code is different as well.
-
-{% if mlflow_variant == "skinny" %}
-{% set mlflow_suffix = "-skinny" %}
-{% set mlflow_other = "" %}
-{% set summary_text = "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client" %}
-{% set description_text = "MLflow Skinny is a lightweight MLflow package without SQL storage, server, UI, or data science dependencies." %}
-{% else %}
-{% set mlflow_suffix = "" %}
-{% set mlflow_other = "-skinny" %}
-{% set summary_text = "MLflow: A Machine Learning Lifecycle Platform" %}
-{% set description_text = "MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models. MLflow offers a set of lightweight APIs that can be used with any existing machine learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you currently run ML code (e.g. in notebooks, standalone applications or the cloud)." %}
-{% endif %}
-
 package:
   name: {{ name }}{{ mlflow_suffix }}
   version: {{ version }}
@@ -32,18 +27,17 @@ source:
   # those packages aren't installed in our build. Converting to a multi-output
   # recipe would be needed to use pyproject.release.toml correctly.
   url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: ab4b26e1be6831cf3ea38d80c8c8c80f27a709ce1438f30f8d0a20fb1f02d985
+  sha256: 07d60f662eeaeaeb5d7fb817fd21a14f5cfbd08d058cb0dc08cfc08f1ed60bd5
 
 build:
   number: 0
-{% if not win %}
   script: |
-    {% if mlflow_variant == "skinny" %}
+
     export MLFLOW_SKINNY=1
     cd {{ SRC_DIR }}/libs/skinny
-    {% endif %}
+
     {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vvv
-{% endif %}
+
   entry_points:
     - mlflow=mlflow.cli:cli
   skip: true  # [py<310]
@@ -55,46 +49,46 @@ requirements:
     - setuptools <=82.0.1
   run:
     - python
-    - cachetools >=5.0.0,<8
-    - click >=7.0,<9
+    - cachetools <8,>=5.0.0
+    - click <9,>=7.0
     - cloudpickle <4
-    - databricks-sdk >=0.20.0,<1
+    - databricks-sdk <1,>=0.20.0
     - fastapi <1
-    - gitpython >=3.1.9,<4
-    - importlib-metadata >=3.7.0,<10,!=4.7.0
-    - opentelemetry-api >=1.9.0,<3
-    - opentelemetry-proto >=1.9.0,<3
-    - opentelemetry-sdk >=1.9.0,<3
+    - gitpython <4,>=3.1.9
+    - importlib-metadata <10,>=3.7.0,!=4.7.0
+    - opentelemetry-api <3,>=1.9.0
+    - opentelemetry-proto <3,>=1.9.0
+    - opentelemetry-sdk <3,>=1.9.0
     - packaging <27
-    - protobuf >=3.12.0,<8
-    - pydantic >=2,<3
-    - python-dotenv >=0.19.0,<2
-    - pyyaml >=5.1,<7
-    - requests >=2.17.3,<3
-    - sqlparse >=0.4.0,<1
+    - protobuf <8,>=3.12.0
+    - pydantic <3,>=2.0.0
+    - python-dotenv <2,>=0.19.0
+    - pyyaml <7,>=5.1
+    - requests <3,>=2.17.3
+    - sqlparse <1,>=0.4.0
     - starlette <2
     - typing-extensions >=4.0.0,<5
     - uvicorn <1
-{% if mlflow_variant != "skinny" %}
     - flask-cors <7
     - flask <4
-    - aiohttp <4
+    - aiohttp <4,>=3.7.0
     - alembic <2,!=1.10.0
-    - cryptography >=43.0.0,<49
-    - docker-py >=4.0.0,<8
+    - cryptography <49,>=43.0.0
+    - docker-py <8,>=4.0.0
     - graphene <4
     - gunicorn <27  # [not win]
-    - huey >=2.5.4,<4
+    - huey <4,>=2.5.4
     - matplotlib-base <4
     - numpy <3
     - pandas <3
-    - pyarrow >=4.0.0,<25
+    - pyarrow <25,>=4.0.0
     - scikit-learn <2
     - scipy <2
     - skops <1
-    - sqlalchemy >=1.4.0,<3
+    - sqlalchemy <3,>=1.4.0
     - waitress <4  # [win]
-{% endif %}
+    - flask_cors <7
+    - typing_extensions <5,>=4.0.0
   run_constrained:
     - mlflow{{ mlflow_other }} <0a0
     # extras
@@ -104,21 +98,21 @@ requirements:
     - azure-storage-file-datalake >12
     - databricks-agents >=1.2.0,<2.0
     # gateway or genai
-    - boto3 >=1.28.56,<2
+    - boto3 <2,>=1.28.56
     - slowapi <1,>=0.1.9
     - tiktoken <1
     - uvicorn-standard <1
     - watchfiles <2
     # mcp
-    - fastmcp >=2.0.0,<4
+    - fastmcp <4,>=2.7.0
     - click !=8.3.0
     # azure
     - azure-storage-blob >=12
     - azure-identity >=1.6.1
     # langchain
-    - langchain >=0.3.26,<=1.3.0
+    - langchain >=0.3.26,<=1.3.4
     # auth
-    - flask-wtf <2
+    - Flask-WTF <2
 
 test:
   imports:
@@ -130,13 +124,11 @@ test:
     - mlflow.store
     - mlflow.tracking
     - mlflow.utils
-{% if mlflow_variant != "skinny" %}
     - mlflow.models
     - mlflow.pyfunc
     - mlflow.pytorch
     - mlflow.sagemaker
     - mlflow.server
-{% endif %}
   source_files:
     - tests/artifacts
   requires:
@@ -148,35 +140,14 @@ test:
     - mlflow --help
     - mlflow --version
     - pip check
-    # these tests come from the conda-forge recipe
-{% if mlflow_variant != "skinny" %}
-    - mlflow server --help
-    # This should not be packaged
-    - test ! -f $SP_DIR/pylint_plugins           # [unix]
-    - echo "Checking 'mlflow' exists..."         # [unix]
-    - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
-    # smoke tests
-    # skip test_log_artifact_windows_path_with_hostname (run only for win)
-    # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_log_artifact_windows_path_with_hostname or test_artifact_logging_resolution_works_with_non_root_working_directory)"
-{% else %}
-    - echo "Checking 'mlflow-skinny' exists..."         # [unix]
-    - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
-    # smoke tests
-    # skip test_load_image because numpy is not included in the skinny variant
-    # skip test_log_artifact_windows_path_with_hostname (run only for win)
-    # because needs a data file
-    - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory or test_list_artifacts_with_artifact_uri or test_list_artifacts_with_run_id)"
-{% endif %}
-    - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
 
 about:
   home: https://mlflow.org
   license: Apache-2.0
   license_family: APACHE
   license_file: LICENSE.txt
-  summary: "{{ summary_text }}"
-  description: "{{ description_text }}"
+  summary: {{ summary_text }}
+  description: {{ description_text }}
   doc_url: https://mlflow.org
   dev_url: https://github.com/mlflow/mlflow
 
@@ -199,3 +170,22 @@ extra:
     - xhochy
     - zangr
     - janjagusch
+
+<conda_recipe_manager.types.SentinelType object at 0x7fa263586510>: # these tests come from the conda-forge recipe
+  - mlflow server --help
+  # This should not be packaged
+  - test ! -f $SP_DIR/pylint_plugins  # [unix]
+  - echo "Checking 'mlflow' exists..."  # [unix]
+  - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
+  # smoke tests
+  # skip test_log_artifact_windows_path_with_hostname (run only for win)
+  # because needs a data file
+  - pytest -vv tests/artifacts -k "not (test_log_artifact_windows_path_with_hostname or test_artifact_logging_resolution_works_with_non_root_working_directory)"
+  - echo "Checking 'mlflow-skinny' exists..."  # [unix]
+  - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
+  # smoke tests
+  # skip test_load_image because numpy is not included in the skinny variant
+  # skip test_log_artifact_windows_path_with_hostname (run only for win)
+  # because needs a data file
+  - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory or test_list_artifacts_with_artifact_uri or test_list_artifacts_with_run_id)"
+  - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
