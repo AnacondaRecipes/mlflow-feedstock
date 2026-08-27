@@ -2,13 +2,6 @@
 {% set version = "3.15.2" %}
 {% set build_num = 0 %}
 
-# MLFlow offers two variants, a "normal" install and a "skinny" install with
-# a reduced installation and fewer dependencies. The skinny installation is obtained
-# by setting the environment variable MLFLOW_SKINNY at pip install time. For conda
-# we accomplish this with two conda packages, mflow and mlflow-skinny. Note that this
-# is not the same as matplotlib-base/matplotlib, where the only differences is the
-# dependency set; the installed code is different as well.
-
 package:
   name: {{ name }}-packages
   version: {{ version }}
