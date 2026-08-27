@@ -134,6 +134,7 @@ outputs:
         # skip test_log_artifact_windows_path_with_hostname (run only for win)
         # because needs a data file
         - pytest -vv tests/artifacts -k "not (test_log_artifact_windows_path_with_hostname or test_artifact_logging_resolution_works_with_non_root_working_directory)"
+        - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
     about:
       home: https://mlflow.org
       license: Apache-2.0
