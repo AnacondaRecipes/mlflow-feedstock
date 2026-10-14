@@ -1,5 +1,5 @@
 {% set name = "mlflow" %}
-{% set version = "3.17.0" %}
+{% set version = "3.17.1" %}
 {% set build_num = 0 %}
 
 package:
@@ -14,9 +14,10 @@ source:
   # those packages aren't installed in our build. Converting to a multi-output
   # recipe would be needed to use pyproject.release.toml correctly.
   url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: c41f3aaa9c81167f66d0c10f93ae6a1aa563539d86f3756189ebfeabedc6c0c1
+  sha256: 55b50cf5b899f7a0f8833719d166dd495b96d90c6bde842a6874d936ed0cc1c1
+
 build:
-  number: {{ build_num }}
+  number: 0
 
 outputs:
   - name: {{ name }}
@@ -26,8 +27,8 @@ outputs:
       entry_points:
         - mlflow=mlflow.cli:cli
       skip: true  # [py<310]
-    script: build-mlflow.bat    # [win]
-    script: build-mlflow.sh # [unix]
+    script: build-mlflow.bat  # [win]
+    script: build-mlflow.sh  # [unix]
     requirements:
       host:
         - pip
@@ -98,7 +99,6 @@ outputs:
         - langchain >=1.0.0,<=1.4.3
         # auth
         - flask-wtf <2
-
     test:
       imports:
         - mlflow
@@ -128,8 +128,8 @@ outputs:
         # these tests come from the conda-forge recipe
         - mlflow server --help
         # This should not be packaged
-        - test ! -f $SP_DIR/pylint_plugins           # [unix]
-        - echo "Checking 'mlflow' exists..."         # [unix]
+        - test ! -f $SP_DIR/pylint_plugins  # [unix]
+        - echo "Checking 'mlflow' exists..."  # [unix]
         - pip list | grep "mlflow \+${PKG_VERSION}"  # [unix]
         # smoke tests
         # skip test_log_artifact_windows_path_with_hostname (run only for win)
@@ -145,7 +145,6 @@ outputs:
       description: MLflow is a platform to streamline machine learning development, including tracking experiments, packaging code into reproducible runs, and sharing and deploying models. MLflow offers a set of lightweight APIs that can be used with any existing machine learning application or library (TensorFlow, PyTorch, XGBoost, etc), wherever you currently run ML code (e.g. in notebooks, standalone applications or the cloud).
       doc_url: https://mlflow.org
       dev_url: https://github.com/mlflow/mlflow
-  
   - name: {{ name }}-skinny
     version: {{ version }}
     build:
@@ -153,9 +152,8 @@ outputs:
       entry_points:
         - mlflow=mlflow.cli:cli
       skip: true  # [py<310]
-
-    script: build-mlflow-skinny.bat    # [win]
-    script: build-mlflow-skinny.sh # [unix]
+    script: build-mlflow-skinny.bat  # [win]
+    script: build-mlflow-skinny.sh  # [unix]
     requirements:
       host:
         - pip
@@ -229,12 +227,12 @@ outputs:
         - mlflow --version
         - pip check
         # these tests come from the conda-forge recipe
-        - echo "Checking 'mlflow-skinny' exists..."         # [unix]
-        - pip list | grep "mlflow-skinny \+${PKG_VERSION}"  # [unix]
-         # smoke tests
-         # skip test_load_image because numpy is not included in the skinny variant
-         # skip test_log_artifact_windows_path_with_hostname (run only for win)
-         # because needs a data file
+        - echo "Checking 'mlflow-skinny' exists..."  # [unix]
+        - pip list | grep "mlflow-skinny \+${PKG_VERSION}":  # [unix]
+          # smoke tests
+          # skip test_load_image because numpy is not included in the skinny variant
+          # skip test_log_artifact_windows_path_with_hostname (run only for win)
+          # because needs a data file
         - pytest -vv tests/artifacts -k "not (test_load_image or test_log_artifact_windows_path_with_hostname or client_and_tracking_uri or run_id_and_artifact_path or model_artifacts_exist or test_download_artifacts_with or test_load_text or test_load_dict or test_load_json_invalid_json or test_artifact_logging_resolution_works_with_non_root_working_directory or test_list_artifacts_with_artifact_uri or test_list_artifacts_with_run_id)"
         - python -c "import mlflow; print(mlflow.__version__); assert(mlflow.__version__ == '{{ version }}');"
     about:
@@ -243,9 +241,10 @@ outputs:
       license_family: APACHE
       license_file: LICENSE.txt
       summary: "MLflow Skinny: A Lightweight Machine Learning Lifecycle Platform Client"
-      description: "MLflow Skinny is a lightweight MLflow package without SQL storage, server, UI, or data science dependencies."
+      description: MLflow Skinny is a lightweight MLflow package without SQL storage, server, UI, or data science dependencies.
       doc_url: https://mlflow.org
       dev_url: https://github.com/mlflow/mlflow
+
 about:
   home: https://mlflow.org
   license: Apache-2.0
@@ -275,4 +274,3 @@ extra:
     - xhochy
     - zangr
     - janjagusch
-
